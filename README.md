@@ -94,17 +94,20 @@ Sometimes, redesigning what already exists helps us imagine **how much better th
 
 Made with ❤️ for **VILNIUS TECH** University
 
-Some screenshots from this project:
+## Some screenshots from this project:
+
 (Dark Theme)
-<img width="1880" height="956" alt="Screenshot from 2025-10-23 21-14-35" src="https://github.com/user-attachments/assets/34a0bd23-2319-4296-9c63-4b0886f98a25" />
-<img width="1880" height="956" alt="Screenshot from 2025-10-23 21-14-19" src="https://github.com/user-attachments/assets/2c6849ac-49a1-4f25-beba-e7996d21a8fc" />
-<img width="1880" height="956" alt="Screenshot from 2025-10-23 21-14-11" src="https://github.com/user-attachments/assets/8d3c4551-3c1f-4580-90b4-2468538ceea1" />
-<img width="1880" height="956" alt="Screenshot from 2025-10-23 21-14-02" src="https://github.com/user-attachments/assets/2e8d9586-df6e-448a-9ee5-df4dde6d9941" />
+
 <img width="1873" height="957" alt="Screenshot from 2025-10-23 21-13-45" src="https://github.com/user-attachments/assets/add09537-521f-43e1-8f19-ccc0d8a6e3e2" />
+<img width="1880" height="956" alt="Screenshot from 2025-10-23 21-14-02" src="https://github.com/user-attachments/assets/2e8d9586-df6e-448a-9ee5-df4dde6d9941" />
+<img width="1880" height="956" alt="Screenshot from 2025-10-23 21-14-11" src="https://github.com/user-attachments/assets/8d3c4551-3c1f-4580-90b4-2468538ceea1" />
+<img width="1880" height="956" alt="Screenshot from 2025-10-23 21-14-19" src="https://github.com/user-attachments/assets/2c6849ac-49a1-4f25-beba-e7996d21a8fc" />
+<img width="1880" height="956" alt="Screenshot from 2025-10-23 21-14-35" src="https://github.com/user-attachments/assets/34a0bd23-2319-4296-9c63-4b0886f98a25" />
 
 (Light Theme)
-<img width="1880" height="956" alt="Screenshot from 2025-10-23 21-17-05" src="https://github.com/user-attachments/assets/2a4b92e9-b2c2-4ef6-8853-b237a2c4c241" />
-<img width="1880" height="956" alt="Screenshot from 2025-10-23 21-16-57" src="https://github.com/user-attachments/assets/8196004e-4e98-49cb-bf3d-6cd4e1d17eda" />
-<img width="1880" height="956" alt="Screenshot from 2025-10-23 21-16-51" src="https://github.com/user-attachments/assets/9437a4fd-429c-4884-a954-4879ec484243" />
-<img width="1880" height="956" alt="Screenshot from 2025-10-23 21-16-43" src="https://github.com/user-attachments/assets/fd4c8032-42ba-42c3-a66c-a3b3bc32679e" />
+
 <img width="1880" height="956" alt="Screenshot from 2025-10-23 21-16-35" src="https://github.com/user-attachments/assets/28385fb3-d7bb-4bf7-95a3-59cae4358b49" />
+<img width="1880" height="956" alt="Screenshot from 2025-10-23 21-16-43" src="https://github.com/user-attachments/assets/fd4c8032-42ba-42c3-a66c-a3b3bc32679e" />
+<img width="1880" height="956" alt="Screenshot from 2025-10-23 21-16-51" src="https://github.com/user-attachments/assets/9437a4fd-429c-4884-a954-4879ec484243" />
+<img width="1880" height="956" alt="Screenshot from 2025-10-23 21-16-57" src="https://github.com/user-attachments/assets/8196004e-4e98-49cb-bf3d-6cd4e1d17eda" />
+<img width="1880" height="956" alt="Screenshot from 2025-10-23 21-17-05" src="https://github.com/user-attachments/assets/2a4b92e9-b2c2-4ef6-8853-b237a2c4c241" />
