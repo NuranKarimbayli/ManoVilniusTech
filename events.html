@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VILNIUS TECH - Events</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png"
+        href="https://upload.wikimedia.org/wikipedia/commons/e/ef/Vilnius_TECH_%28VGTU%29_herbas.png">
+    <style>
+        :root {
+            --primary-color: #05b1bd;
+            --primary-dark: #048a94;
+            --light-bg: #f5f8f8;
+            --dark-bg: #0f2123;
+            --card-light: #ffffff;
+            --card-dark: #132a32;
+            --text-light: #333333;
+            --text-dark: #e9ecef;
+            --text-muted-light: #5f898c;
+            --text-muted-dark: #a0aec0;
+            --border-light: #dbe5e6;
+            --border-dark: #2a4a55;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-light);
+        }
+
+        body.dark {
+            background-color: var(--dark-bg);
+            color: var(--text-dark);
+        }
+
+        /* Modern Header Butonları */
+        .theme-toggle-btn {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: var(--card-light);
+            border: 1.5px solid var(--border-light);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .dark .theme-toggle-btn {
+            background: var(--card-dark);
+            border-color: var(--border-dark);
+        }
+
+        .theme-toggle-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .theme-toggle-btn:hover::before {
+            left: 100%;
+        }
+
+        .theme-toggle-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(5, 177, 189, 0.2);
+            border-color: var(--primary-color);
+        }
+
+        .theme-icon {
+            position: relative;
+            z-index: 2;
+            font-size: 18px;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            color: var(--primary-color);
+        }
+
+        .theme-toggle-btn:hover .theme-icon {
+            transform: rotate(180deg) scale(1.2);
+        }
+
+        /* Profile Butonu Özel Stili */
+        .profile-btn-modern {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: var(--card-light);
+            border: 1.5px solid var(--border-light);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .dark .profile-btn-modern {
+            background: var(--card-dark);
+            border-color: var(--border-dark);
+        }
+
+        .profile-btn-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .profile-btn-modern:hover::before {
+            left: 100%;
+        }
+
+        .profile-btn-modern:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.2);
+            border-color: #10b981;
+        }
+
+        .profile-avatar {
+            position: relative;
+            z-index: 2;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 10px;
+            transition: all 0.3s ease;
+            margin-left: 7px;
+        }
+
+        .profile-btn-modern:hover .profile-avatar {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Dropdown styles */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--card-light);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+            padding: 8px;
+            margin-top: 8px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: var(--transition);
+            z-index: 1001;
+            min-width: 180px;
+            animation: dropdownFade 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .dark .dropdown-content {
+            background: var(--card-dark);
+        }
+
+        .dropdown-content.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        @keyframes dropdownFade {
+            from {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .dark .dropdown-item {
+            color: var(--text-dark);
+        }
+
+        .dropdown-item:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .dropdown-item i {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--border-light);
+            margin: 4px 0;
+        }
+
+        .dark .dropdown-divider {
+            background: var(--border-dark);
+        }
+
+        /* Language Selector */
+        .language-selector {
+            position: relative;
+        }
+
+        .language-btn {
+            background: none;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: var(--transition);
+            color: var(--text-light);
+            user-select: none;
+        }
+
+        .dark .language-btn {
+            color: var(--text-dark);
+        }
+
+        .language-btn:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .language-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .language-flag {
+            width: 24px;
+            height: 16px;
+            border-radius: 2px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .language-flag img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--card-light);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+            padding: 8px;
+            margin-top: 8px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: var(--transition);
+            z-index: 1001;
+            min-width: 150px;
+        }
+
+        .dark .language-dropdown {
+            background: var(--card-dark);
+        }
+
+        .language-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .language-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 14px;
+            user-select: none;
+        }
+
+        .dark .language-option {
+            color: var(--text-dark);
+        }
+
+        .language-option:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .language-option:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--card-light);
+            color: var(--text-light);
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 9999;
+            transform: translateX(150%);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(5, 177, 189, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .toast-icon i {
+            font-size: 14px;
+            color: var(--primary-color);
+        }
+
+        .toast-message {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .dark .toast {
+            background: var(--card-dark);
+            color: var(--text-dark);
+        }
+
+        /* Events Page Specific Styles */
+        .events-card {
+            background: var(--card-light);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: var(--transition);
+        }
+
+        .dark .events-card {
+            background: var(--card-dark);
+        }
+
+        .events-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .event-urgent {
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .event-upcoming {
+            border-left: 4px solid #51cf66;
+        }
+
+        .event-regular {
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .filter-btn {
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .filter-btn.active {
+            background: rgba(5, 177, 189, 0.1);
+            color: var(--primary-color);
+        }
+
+        .filter-btn:not(.active) {
+            background: var(--card-light);
+            color: var(--text-light);
+        }
+
+        .dark .filter-btn:not(.active) {
+            background: var(--card-dark);
+            color: var(--text-dark);
+        }
+
+        .filter-btn:not(.active):hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .filter-btn:not(.active):hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .search-input {
+            background: var(--card-light);
+            border: 1.5px solid var(--border-light);
+            border-radius: 12px;
+            padding: 16px;
+            color: var(--text-light);
+            transition: var(--transition);
+            font-size: 14px;
+        }
+
+        .dark .search-input {
+            background: var(--card-dark);
+            border-color: var(--border-dark);
+            color: var(--text-dark);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(5, 177, 189, 0.1);
+        }
+
+        /* Sidebar Styles */
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-muted-light);
+            text-decoration: none;
+        }
+
+        .dark .sidebar-item {
+            color: var(--text-muted-dark);
+        }
+
+        .sidebar-item:hover {
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--text-light);
+        }
+
+        .dark .sidebar-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-dark);
+        }
+
+        .sidebar-item.active {
+            background: rgba(5, 177, 189, 0.1);
+            color: var(--primary-color);
+        }
+
+        .sidebar-item i {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Pagination Styles */
+        .pagination-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            transition: var(--transition);
+            color: var(--text-light);
+            cursor: pointer;
+        }
+
+        .dark .pagination-btn {
+            color: var(--text-dark);
+        }
+
+        .pagination-btn:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .pagination-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .pagination-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Mobile için Responsive */
+        @media (max-width: 768px) {
+
+            .theme-toggle-btn,
+            .profile-btn-modern {
+                width: 36px;
+                height: 36px;
+            }
+
+            .theme-icon {
+                font-size: 16px;
+            }
+
+            .profile-avatar {
+                width: 20px;
+                height: 20px;
+                font-size: 9px;
+            }
+        }
+
+        /* Fade In Animation */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Stagger Animation Delays */
+        .stagger-1 {
+            animation-delay: 0.1s;
+        }
+
+        .stagger-2 {
+            animation-delay: 0.2s;
+        }
+
+        .stagger-3 {
+            animation-delay: 0.3s;
+        }
+
+        .stagger-4 {
+            animation-delay: 0.4s;
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#05b1bd",
+                        "background-light": "#f5f8f8",
+                        "background-dark": "#0f2123",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-[#333333] dark:text-gray-200">
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-icon">
+            <i class="fas fa-check"></i>
+        </div>
+        <div class="toast-message" id="toastMessage">Event added to calendar!</div>
+    </div>
+
+    <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+        <div class="layout-container flex h-full grow flex-col">
+            <div class="px-4 sm:px-10 md:px-20 lg:px-40 flex flex-1 justify-center py-5">
+                <div class="layout-content-container flex flex-col max-w-[1200px] flex-1">
+                    <header
+                        class="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#dbe5e6] dark:border-gray-700 px-4 sm:px-6 md:px-10 py-3">
+                        <div class="flex items-center gap-8">
+                            <div class="flex items-center gap-3 text-primary">
+                                <div class="size-6">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Vilnius_TECH_%28VGTU%29_herbas.png"
+                                        alt="VILNIUS TECH Logo" class="w-full h-full">
+                                </div>
+                                <h2
+                                    class="text-[#111818] dark:text-white text-xl font-bold leading-tight tracking-[-0.015em]">
+                                    VILNIUS TECH</h2>
+                            </div>
+                            <nav class="hidden md:flex items-center gap-9">
+                                <a class="text-[#111818] dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary"
+                                    href="dashboard.html">Dashboard</a>
+                                <a class="text-[#111818] dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary"
+                                    href="timetable.html">Timetable</a>
+                                <a class="text-[#111818] dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary"
+                                    href="events.html">Events</a>
+                                <a class="text-[#111818] dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary"
+                                    href="profile.html">Profile</a>
+                            </nav>
+                        </div>
+                        <div class="flex flex-1 justify-end gap-2 sm:gap-4">
+                            <button id="themeToggle" class="theme-toggle-btn">
+                                <span class="material-symbols-outlined theme-icon" id="themeIcon">dark_mode</span>
+                            </button>
+
+                            <!-- Language Selector -->
+                            <div class="language-selector">
+                                <button class="language-btn" id="languageBtn">
+                                    <div class="language-flag">
+                                        <img src="https://flagcdn.com/w40/gb.png" width="40" height="20" alt="English">
+                                    </div>
+                                    <span>EN</span>
+                                    <i class="fas fa-chevron-down" style="font-size: 12px;"></i>
+                                </button>
+                                <div class="language-dropdown" id="languageDropdown">
+                                    <div class="language-option" data-lang="en">
+                                        <div class="language-flag">
+                                            <img src="https://flagcdn.com/w40/gb.png" width="40" height="20"
+                                                alt="English">
+                                        </div>
+                                        <span>English</span>
+                                    </div>
+                                    <div class="language-option" data-lang="lt">
+                                        <div class="language-flag">
+                                            <img src="https://flagcdn.com/w40/lt.png" width="40" height="20"
+                                                alt="Lithuanian">
+                                        </div>
+                                        <span>Lietuvių</span>
+                                    </div>
+                                    <div class="language-option" data-lang="ru">
+                                        <div class="language-flag">
+                                            <img src="https://flagcdn.com/w40/ru.png" width="40" height="20"
+                                                alt="Russian">
+                                        </div>
+                                        <span>Русский</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Profile -->
+                            <div class="dropdown">
+                                <button id="profileBtn" class="profile-btn-modern">
+                                    <div class="profile-avatar">NK</div>
+                                </button>
+                                <div class="dropdown-content" id="profileDropdown">
+                                    <a href="profile.html" class="dropdown-item">
+                                        <i class="fas fa-user"></i>
+                                        <span>My Profile</span>
+                                    </a>
+                                    <a href="settings.html" class="dropdown-item">
+                                        <i class="fas fa-cog"></i>
+                                        <span>Settings</span>
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a href="auth.html" class="dropdown-item">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                        <span>Logout</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    <main class="flex-1 px-4 sm:px-6 md:px-10 py-8">
+                        <div class="max-w-6xl mx-auto">
+                            <div
+                                class="flex flex-wrap justify-between gap-3 p-4 border-b border-gray-200 dark:border-gray-700 mb-8">
+                                <p
+                                    class="text-[#111818] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
+                                    Events</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                                <!-- Sidebar -->
+                                <div class="lg:col-span-1">
+                                    <div class="events-card p-6 fade-in stagger-1">
+                                        <div class="flex flex-col items-center text-center mb-6">
+                                            <div
+                                                class="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-2xl font-bold mb-4">
+                                                NK
+                                            </div>
+                                            <h3 class="text-xl font-bold text-[#111818] dark:text-white">Nuran
+                                                Karimbayli</h3>
+                                            <p class="text-[#5f898c] dark:text-gray-400 text-sm">Computer Science</p>
+                                        </div>
+
+                                        <nav class="space-y-2">
+                                            <a href="dashboard.html" class="sidebar-item">
+                                                <i class="fas fa-tachometer-alt"></i>
+                                                <span>Dashboard</span>
+                                            </a>
+                                            <a href="timetable.html" class="sidebar-item">
+                                                <i class="fas fa-calendar-alt"></i>
+                                                <span>Timetable</span>
+                                            </a>
+                                            <a href="courses.html" class="sidebar-item">
+                                                <i class="fas fa-book"></i>
+                                                <span>My Courses</span>
+                                            </a>
+                                            <a href="grades.html" class="sidebar-item">
+                                                <i class="fas fa-chart-line"></i>
+                                                <span>Grades</span>
+                                            </a>
+                                            <a href="events.html" class="sidebar-item active">
+                                                <i class="fas fa-calendar-day"></i>
+                                                <span>Events</span>
+                                            </a>
+                                            <a href="profile.html" class="sidebar-item">
+                                                <i class="fas fa-user"></i>
+                                                <span>Profile</span>
+                                            </a>
+                                        </nav>
+                                    </div>
+                                </div>
+
+                                <!-- Main Content -->
+                                <div class="lg:col-span-3 space-y-8">
+                                    <!-- Search Bar -->
+                                    <div class="px-4 py-3">
+                                        <label class="flex flex-col min-w-40 h-12 w-full">
+                                            <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
+                                                <div
+                                                    class="text-gray-500 flex border-none bg-white dark:bg-gray-800 items-center justify-center pl-4 rounded-l-xl border-r-0">
+                                                    <span class="material-symbols-outlined">search</span>
+                                                </div>
+                                                <input
+                                                    class="search-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-xl text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary border-none bg-white dark:bg-gray-800 h-full placeholder:text-gray-500 dark:placeholder:text-gray-400 px-4 pl-2 text-base font-normal leading-normal"
+                                                    placeholder="Search events..." value="" />
+                                            </div>
+                                        </label>
+                                    </div>
+
+                                    <!-- Filter Buttons -->
+                                    <div class="flex flex-wrap justify-between items-center gap-4 px-4">
+                                        <div class="flex gap-3 overflow-x-auto">
+                                            <button class="filter-btn active">All Events</button>
+                                            <button class="filter-btn">University</button>
+                                            <button class="filter-btn">Faculty</button>
+                                            <button class="filter-btn">Student Clubs</button>
+                                            <button class="filter-btn">Workshops</button>
+                                        </div>
+                                        <div class="flex gap-3">
+                                            <button class="filter-btn">
+                                                <span>Newest First</span>
+                                                <span class="material-symbols-outlined text-lg ml-2">expand_more</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Events Grid -->
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 px-4">
+                                        <!-- Event 1 -->
+                                        <div class="events-card p-6 fade-in stagger-2 event-urgent">
+                                            <div class="flex justify-between items-start mb-4">
+                                                <h3 class="text-xl font-bold text-[#b33a3a] dark:text-[#ff8f8f]">Final
+                                                    Exam Schedule Update</h3>
+                                                <span
+                                                    class="material-symbols-outlined text-[#b33a3a] dark:text-[#ff8f8f]">priority</span>
+                                            </div>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">May 20, 2024 •
+                                                10:00 AM</p>
+                                            <p class="text-gray-600 dark:text-gray-300 mb-4">The final exam schedule for
+                                                the Spring semester has been updated. Please check the portal for your
+                                                revised exam dates and times.</p>
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-sm text-gray-500 dark:text-gray-400">Main
+                                                    Campus</span>
+                                                <button
+                                                    class="text-primary font-semibold hover:underline flex items-center gap-1 add-to-calendar"
+                                                    data-event="Final Exam Schedule Update">
+                                                    <span class="material-symbols-outlined text-sm">event_add</span>
+                                                    Add to Calendar
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Event 2 -->
+                                        <div class="events-card p-6 fade-in stagger-3 event-upcoming">
+                                            <div class="flex justify-between items-start mb-4">
+                                                <h3 class="text-xl font-bold text-[#2b8a3e] dark:text-[#51cf66]">Guest
+                                                    Lecture: AI in Engineering</h3>
+                                                <span
+                                                    class="material-symbols-outlined text-[#2b8a3e] dark:text-[#51cf66]">star</span>
+                                            </div>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">May 25, 2024 • 2:00
+                                                PM</p>
+                                            <p class="text-gray-600 dark:text-gray-300 mb-4">Join us for an exciting
+                                                guest lecture by Dr. Ada Lovelace on the future of Artificial
+                                                Intelligence in modern engineering practices.</p>
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-sm text-gray-500 dark:text-gray-400">Auditorium
+                                                    A</span>
+                                                <button
+                                                    class="text-primary font-semibold hover:underline flex items-center gap-1 add-to-calendar"
+                                                    data-event="Guest Lecture: AI in Engineering">
+                                                    <span class="material-symbols-outlined text-sm">event_add</span>
+                                                    Add to Calendar
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Event 3 -->
+                                        <div class="events-card p-6 fade-in stagger-4 event-regular">
+                                            <div class="flex justify-between items-start mb-4">
+                                                <h3 class="text-xl font-bold text-[#111818] dark:text-white">Summer
+                                                    Internship Fair</h3>
+                                                <span class="material-symbols-outlined text-primary">work</span>
+                                            </div>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">June 5, 2024 • 9:00
+                                                AM - 4:00 PM</p>
+                                            <p class="text-gray-600 dark:text-gray-300 mb-4">Don't miss the Summer
+                                                Internship Fair! Top tech companies will be on campus looking for
+                                                talented students.</p>
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-sm text-gray-500 dark:text-gray-400">Student
+                                                    Center</span>
+                                                <button
+                                                    class="text-primary font-semibold hover:underline flex items-center gap-1 add-to-calendar"
+                                                    data-event="Summer Internship Fair">
+                                                    <span class="material-symbols-outlined text-sm">event_add</span>
+                                                    Add to Calendar
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Event 4 -->
+                                        <div class="events-card p-6 fade-in stagger-2 event-regular">
+                                            <div class="flex justify-between items-start mb-4">
+                                                <h3 class="text-xl font-bold text-[#111818] dark:text-white">Hackathon
+                                                    2024</h3>
+                                                <span class="material-symbols-outlined text-primary">code</span>
+                                            </div>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">June 15-16, 2024 •
+                                                All Day</p>
+                                            <p class="text-gray-600 dark:text-gray-300 mb-4">Annual university
+                                                hackathon. Build innovative projects, compete for prizes, and network
+                                                with industry professionals.</p>
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-sm text-gray-500 dark:text-gray-400">Tech
+                                                    Building</span>
+                                                <button
+                                                    class="text-primary font-semibold hover:underline flex items-center gap-1 add-to-calendar"
+                                                    data-event="Hackathon 2024">
+                                                    <span class="material-symbols-outlined text-sm">event_add</span>
+                                                    Add to Calendar
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Event 5 -->
+                                        <div class="events-card p-6 fade-in stagger-3 event-upcoming">
+                                            <div class="flex justify-between items-start mb-4">
+                                                <h3 class="text-xl font-bold text-[#2b8a3e] dark:text-[#51cf66]">Career
+                                                    Development Workshop</h3>
+                                                <span
+                                                    class="material-symbols-outlined text-[#2b8a3e] dark:text-[#51cf66]">school</span>
+                                            </div>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">May 30, 2024 • 3:00
+                                                PM</p>
+                                            <p class="text-gray-600 dark:text-gray-300 mb-4">Learn how to prepare for
+                                                job interviews, write effective resumes, and navigate the tech job
+                                                market.</p>
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-sm text-gray-500 dark:text-gray-400">Career
+                                                    Center</span>
+                                                <button
+                                                    class="text-primary font-semibold hover:underline flex items-center gap-1 add-to-calendar"
+                                                    data-event="Career Development Workshop">
+                                                    <span class="material-symbols-outlined text-sm">event_add</span>
+                                                    Add to Calendar
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Event 6 -->
+                                        <div class="events-card p-6 fade-in stagger-4 event-regular">
+                                            <div class="flex justify-between items-start mb-4">
+                                                <h3 class="text-xl font-bold text-[#111818] dark:text-white">Graduation
+                                                    Ceremony</h3>
+                                                <span class="material-symbols-outlined text-primary">celebration</span>
+                                            </div>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">June 30, 2024 •
+                                                10:00 AM</p>
+                                            <p class="text-gray-600 dark:text-gray-300 mb-4">Annual graduation ceremony
+                                                for all graduating students. Celebrate your achievements with family and
+                                                friends.</p>
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-sm text-gray-500 dark:text-gray-400">Main
+                                                    Auditorium</span>
+                                                <button
+                                                    class="text-primary font-semibold hover:underline flex items-center gap-1 add-to-calendar"
+                                                    data-event="Graduation Ceremony">
+                                                    <span class="material-symbols-outlined text-sm">event_add</span>
+                                                    Add to Calendar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Pagination -->
+                                    <div class="flex justify-center mt-12">
+                                        <nav class="flex items-center gap-2">
+                                            <a class="pagination-btn" href="#">
+                                                <span class="material-symbols-outlined">chevron_left</span>
+                                            </a>
+                                            <a class="pagination-btn active" href="#">1</a>
+                                            <a class="pagination-btn" href="#">2</a>
+                                            <a class="pagination-btn" href="#">3</a>
+                                            <span
+                                                class="flex items-center justify-center size-10 text-gray-500">...</span>
+                                            <a class="pagination-btn" href="#">8</a>
+                                            <a class="pagination-btn" href="#">
+                                                <span class="material-symbols-outlined">chevron_right</span>
+                                            </a>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const body = document.body;
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const languageBtn = document.getElementById('languageBtn');
+        const languageDropdown = document.getElementById('languageDropdown');
+        const languageOptions = document.querySelectorAll('.language-option');
+        const profileBtn = document.getElementById('profileBtn');
+        const profileDropdown = document.getElementById('profileDropdown');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        const dropdowns = [languageDropdown, profileDropdown];
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const addToCalendarButtons = document.querySelectorAll('.add-to-calendar');
+
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        if (savedTheme === 'dark') {
+            body.classList.add('dark');
+            themeIcon.textContent = 'light_mode';
+        }
+
+        // Theme toggle functionality
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark');
+
+            if (body.classList.contains('dark')) {
+                themeIcon.textContent = 'light_mode';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.textContent = 'dark_mode';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Language dropdown functionality
+        languageBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeAllDropdowns();
+            languageDropdown.classList.toggle('show');
+        });
+
+        // Profile dropdown functionality
+        profileBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeAllDropdowns();
+            profileDropdown.classList.toggle('show');
+        });
+
+        // Language selection
+        languageOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const selectedLang = option.getAttribute('data-lang');
+
+                // Update button text and flag
+                const flagImg = languageBtn.querySelector('img');
+                const langText = languageBtn.querySelector('span');
+
+                if (selectedLang === 'en') {
+                    flagImg.src = 'https://flagcdn.com/w40/gb.png';
+                    langText.textContent = 'EN';
+                } else if (selectedLang === 'lt') {
+                    flagImg.src = 'https://flagcdn.com/w40/lt.png';
+                    langText.textContent = 'LT';
+                } else if (selectedLang === 'ru') {
+                    flagImg.src = 'https://flagcdn.com/w40/ru.png';
+                    langText.textContent = 'RU';
+                }
+
+                // Close dropdown
+                languageDropdown.classList.remove('show');
+
+                // Show toast notification
+                showToast(`Language changed to ${option.querySelector('span').textContent}`);
+            });
+        });
+
+        // Filter button functionality
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                button.classList.add('active');
+            });
+        });
+
+        // Add to calendar functionality
+        addToCalendarButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const eventName = this.getAttribute('data-event');
+                showToast(`"${eventName}" added to your calendar!`);
+            });
+        });
+
+        // Close all dropdowns function
+        function closeAllDropdowns() {
+            dropdowns.forEach(dropdown => {
+                dropdown.classList.remove('show');
+            });
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', () => {
+            closeAllDropdowns();
+        });
+
+        // Show toast notification
+        function showToast(message) {
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Add animation to elements on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const animatedElements = document.querySelectorAll('.fade-in');
+            animatedElements.forEach(el => {
+                el.style.opacity = '0';
+            });
+
+            setTimeout(() => {
+                animatedElements.forEach(el => {
+                    el.style.opacity = '1';
+                });
+            }, 100);
+        });
+    </script>
+</body>
+
+</html>

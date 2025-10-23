@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VILNIUS TECH - Timetable</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png"
+        href="https://upload.wikimedia.org/wikipedia/commons/e/ef/Vilnius_TECH_%28VGTU%29_herbas.png">
+    <style>
+        :root {
+            --primary-color: #05b1bd;
+            --primary-dark: #048a94;
+            --light-bg: #f5f8f8;
+            --dark-bg: #0f2123;
+            --card-light: #ffffff;
+            --card-dark: #132a32;
+            --text-light: #333333;
+            --text-dark: #e9ecef;
+            --text-muted-light: #5f898c;
+            --text-muted-dark: #a0aec0;
+            --border-light: #dbe5e6;
+            --border-dark: #2a4a55;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-light);
+        }
+
+        body.dark {
+            background-color: var(--dark-bg);
+            color: var(--text-dark);
+        }
+
+        .table-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scan-animation::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+            animation: scan 2s ease-out forwards;
+        }
+
+        @keyframes scan {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(100vh);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-in {
+            animation: slideIn 0.4s ease-out forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .calendar-day {
+            transition: var(--transition);
+        }
+
+        .calendar-day:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .calendar-event {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        .view-toggle {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .view-toggle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+        }
+
+        .view-toggle.active::before {
+            animation: shimmer 1.5s ease-out;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        .dark ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Responsive table styles */
+        @container (max-width: 900px) {
+            .table-column-friday {
+                display: none;
+            }
+        }
+
+        @container (max-width: 768px) {
+            .table-column-thursday {
+                display: none;
+            }
+        }
+
+        @container (max-width: 640px) {
+
+            table,
+            thead,
+            tbody,
+            th,
+            td,
+            tr {
+                display: block;
+            }
+
+            thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            tr {
+                border: 1px solid var(--border-light);
+                margin-bottom: 1rem;
+                border-radius: 0.5rem;
+                overflow: hidden;
+            }
+
+            .dark tr {
+                border-color: var(--border-dark);
+            }
+
+            td {
+                border: none;
+                border-bottom: 1px solid var(--border-light);
+                position: relative;
+                padding-left: 50%;
+                min-height: 50px;
+                display: flex;
+                align-items: center;
+            }
+
+            .dark td {
+                border-color: var(--border-dark);
+            }
+
+            td:before {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                left: 1rem;
+                width: 45%;
+                padding-right: 10px;
+                white-space: nowrap;
+                font-weight: 500;
+                color: var(--primary-color);
+            }
+
+            td:nth-of-type(1):before {
+                content: "Time";
+            }
+
+            td:nth-of-type(2):before {
+                content: "Monday";
+            }
+
+            td:nth-of-type(3):before {
+                content: "Tuesday";
+            }
+
+            td:nth-of-type(4):before {
+                content: "Wednesday";
+            }
+
+            td:nth-of-type(5):before {
+                content: "Thursday";
+            }
+
+            td:nth-of-type(6):before {
+                content: "Friday";
+            }
+        }
+
+        /* Modern Header Butonları */
+        .theme-toggle-btn {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: var(--card-light);
+            border: 1.5px solid var(--border-light);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .dark .theme-toggle-btn {
+            background: var(--card-dark);
+            border-color: var(--border-dark);
+        }
+
+        .theme-toggle-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .theme-toggle-btn:hover::before {
+            left: 100%;
+        }
+
+        .theme-toggle-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(5, 177, 189, 0.2);
+            border-color: var(--primary-color);
+        }
+
+        .theme-icon {
+            position: relative;
+            margin-top: 3px;
+            z-index: 2;
+            font-size: 18px;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            color: var(--primary-color);
+        }
+
+        .theme-toggle-btn:hover .theme-icon {
+            transform: rotate(180deg) scale(1.2);
+        }
+
+        /* Notification Butonu Özel Stili */
+        .notification-btn-modern {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: var(--card-light);
+            border: 1.5px solid var(--border-light);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .dark .notification-btn-modern {
+            background: var(--card-dark);
+            border-color: var(--border-dark);
+        }
+
+        .notification-btn-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .notification-btn-modern:hover::before {
+            left: 100%;
+        }
+
+        .notification-btn-modern:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(255, 193, 7, 0.2);
+            border-color: #ffc107;
+        }
+
+        .notification-icon {
+            position: relative;
+            z-index: 2;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            color: var(--text-light);
+        }
+
+        .dark .notification-icon {
+            color: var(--text-dark);
+        }
+
+        .notification-btn-modern:hover .notification-icon {
+            color: #ffc107;
+            transform: scale(1.2);
+            animation: bellRing 0.5s ease-in-out;
+        }
+
+        @keyframes bellRing {
+
+            0%,
+            100% {
+                transform: rotate(0) scale(1.2);
+            }
+
+            25% {
+                transform: rotate(-15deg) scale(1.2);
+            }
+
+            75% {
+                transform: rotate(15deg) scale(1.2);
+            }
+        }
+
+        .notification-badge-modern {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(135deg, #ffc107, #ff8c00);
+            border-radius: 50%;
+            border: 2px solid var(--card-light);
+            animation: pulse 2s infinite;
+            z-index: 3;
+        }
+
+        .dark .notification-badge-modern {
+            border-color: var(--card-dark);
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
+            }
+
+            70% {
+                transform: scale(1.1);
+                box-shadow: 0 0 0 6px rgba(255, 193, 7, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+            }
+        }
+
+        /* Profile Butonu Özel Stili */
+        .profile-btn-modern {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: var(--card-light);
+            border: 1.5px solid var(--border-light);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .dark .profile-btn-modern {
+            background: var(--card-dark);
+            border-color: var(--border-dark);
+        }
+
+        .profile-btn-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .profile-btn-modern:hover::before {
+            left: 100%;
+        }
+
+        .profile-btn-modern:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.2);
+            border-color: #10b981;
+        }
+
+        .profile-avatar {
+            position: relative;
+            z-index: 2;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 10px;
+            transition: all 0.3s ease;
+            margin-left: 7px;
+        }
+
+        .profile-btn-modern:hover .profile-avatar {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Dropdown styles */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--card-light);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+            padding: 8px;
+            margin-top: 8px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: var(--transition);
+            z-index: 1001;
+            min-width: 180px;
+            animation: dropdownFade 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .dark .dropdown-content {
+            background: var(--card-dark);
+        }
+
+        .dropdown-content.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        @keyframes dropdownFade {
+            from {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .dark .dropdown-item {
+            color: var(--text-dark);
+        }
+
+        .dropdown-item:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .dropdown-item i {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--border-light);
+            margin: 4px 0;
+        }
+
+        .dark .dropdown-divider {
+            background: var(--border-dark);
+        }
+
+        /* Notification dropdown specific styles */
+        .notification-dropdown {
+            width: 320px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .notification-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dark .notification-header {
+            border-bottom-color: var(--border-dark);
+        }
+
+        .notification-title {
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--text-light);
+        }
+
+        .dark .notification-title {
+            color: var(--text-dark);
+        }
+
+        .notification-clear {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .notification-clear:hover {
+            color: var(--primary-dark);
+        }
+
+        .notification-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .dark .notification-item {
+            border-bottom-color: var(--border-dark);
+        }
+
+        .notification-item:hover {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .dark .notification-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .notification-item.unread {
+            background: rgba(5, 177, 189, 0.05);
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .notification-icon-large {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(5, 177, 189, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .notification-icon-large i {
+            font-size: 14px;
+            color: var(--primary-color);
+        }
+
+        .notification-text {
+            flex-grow: 1;
+        }
+
+        .notification-message {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 4px;
+        }
+
+        .dark .notification-message {
+            color: var(--text-dark);
+        }
+
+        .notification-time {
+            font-size: 12px;
+            color: var(--text-muted-light);
+        }
+
+        .dark .notification-time {
+            color: var(--text-muted-dark);
+        }
+
+        .notification-footer {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border-light);
+            text-align: center;
+        }
+
+        .dark .notification-footer {
+            border-top-color: var(--border-dark);
+        }
+
+        .notification-view-all {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .notification-view-all:hover {
+            color: var(--primary-dark);
+        }
+
+        /* Subject color coding */
+        .subject-law {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid rgb(59, 130, 246);
+        }
+
+        .subject-math {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid rgb(16, 185, 129);
+        }
+
+        .subject-ai-software {
+            background: rgba(139, 92, 246, 0.1);
+            border-left: 4px solid rgb(139, 92, 246);
+        }
+
+        .subject-ai-fundamentals {
+            background: rgba(99, 102, 241, 0.1);
+            border-left: 4px solid rgb(99, 102, 241);
+        }
+
+        .subject-english {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 4px solid rgb(245, 158, 11);
+        }
+
+        .dark .subject-law {
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .dark .subject-math {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .dark .subject-ai-software {
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        .dark .subject-ai-fundamentals {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .dark .subject-english {
+            background: rgba(245, 158, 11, 0.2);
+        }
+
+        /* Mobile için Responsive */
+        @media (max-width: 768px) {
+
+            .theme-toggle-btn,
+            .notification-btn-modern,
+            .profile-btn-modern {
+                width: 36px;
+                height: 36px;
+            }
+
+            .theme-icon,
+            .notification-icon {
+                font-size: 16px;
+            }
+
+            .profile-avatar {
+                width: 20px;
+                height: 20px;
+                font-size: 9px;
+            }
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#05b1bd",
+                        "background-light": "#f5f8f8",
+                        "background-dark": "#0f2123",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-[#333333] dark:text-gray-200">
+    <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+        <div class="layout-container flex h-full grow flex-col">
+            <div class="px-4 sm:px-10 md:px-20 lg:px-40 flex flex-1 justify-center py-5">
+                <div class="layout-content-container flex flex-col max-w-[1200px] flex-1">
+                    <header
+                        class="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#dbe5e6] dark:border-gray-700 px-4 sm:px-6 md:px-10 py-3">
+                        <div class="flex items-center gap-8">
+                            <div class="flex items-center gap-3 text-primary">
+                                <div class="size-6">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Vilnius_TECH_%28VGTU%29_herbas.png"
+                                        alt="VILNIUS TECH Logo" class="w-full h-full">
+                                </div>
+                                <h2
+                                    class="text-[#111818] dark:text-white text-xl font-bold leading-tight tracking-[-0.015em]">
+                                    VILNIUS TECH</h2>
+                            </div>
+                            <nav class="hidden md:flex items-center gap-9">
+                                <a class="text-[#111818] dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary"
+                                    href="dashboard.html">Dashboard</a>
+                                <a class="text-[#111818] dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary"
+                                    href="timetable.html">Timetable</a>
+                            </nav>
+                        </div>
+                        <div class="flex flex-1 justify-end gap-2 sm:gap-4">
+                            <button id="themeToggle" class="theme-toggle-btn">
+                                <span class="material-symbols-outlined theme-icon" id="themeIcon">dark_mode</span>
+                            </button>
+
+                            <!-- Notifications -->
+                            <div class="dropdown">
+                                <button id="notificationBtn" class="notification-btn-modern">
+                                    <i class="fas fa-bell notification-icon"></i>
+                                    <span class="notification-badge-modern"></span>
+                                </button>
+                                <div class="dropdown-content notification-dropdown" id="notificationDropdown">
+                                    <div class="notification-header">
+                                        <h3 class="notification-title">Notifications</h3>
+                                        <button class="notification-clear" id="notificationClear">Mark all as
+                                            read</button>
+                                    </div>
+                                    <div class="notification-list">
+                                        <div class="notification-item unread">
+                                            <div class="notification-content">
+                                                <div class="notification-icon-large">
+                                                    <i class="fas fa-exclamation-circle"></i>
+                                                </div>
+                                                <div class="notification-text">
+                                                    <div class="notification-message">Your assignment submission is due
+                                                        in 2 days</div>
+                                                    <div class="notification-time">2 hours ago</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="notification-item unread">
+                                            <div class="notification-content">
+                                                <div class="notification-icon-large">
+                                                    <i class="fas fa-calendar-check"></i>
+                                                </div>
+                                                <div class="notification-text">
+                                                    <div class="notification-message">New event: Career Fair 2025
+                                                        registration is open</div>
+                                                    <div class="notification-time">5 hours ago</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="notification-item">
+                                            <div class="notification-content">
+                                                <div class="notification-icon-large">
+                                                    <i class="fas fa-book"></i>
+                                                </div>
+                                                <div class="notification-text">
+                                                    <div class="notification-message">New course materials available for
+                                                        Mathematics</div>
+                                                    <div class="notification-time">1 day ago</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="notification-item">
+                                            <div class="notification-content">
+                                                <div class="notification-icon-large">
+                                                    <i class="fas fa-chart-line"></i>
+                                                </div>
+                                                <div class="notification-text">
+                                                    <div class="notification-message">Your grade for Physics has been
+                                                        updated</div>
+                                                    <div class="notification-time">2 days ago</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="notification-footer">
+                                        <a href="#" class="notification-view-all">View all notifications</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Profile -->
+                            <div class="dropdown">
+                                <button id="profileBtn" class="profile-btn-modern">
+                                    <div class="profile-avatar">NK</div>
+                                </button>
+                                <div class="dropdown-content" id="profileDropdown">
+                                    <a href="profile.html" class="dropdown-item">
+                                        <i class="fas fa-user"></i>
+                                        <span>My Profile</span>
+                                    </a>
+                                    <a href="settings.html" class="dropdown-item">
+                                        <i class="fas fa-cog"></i>
+                                        <span>Settings</span>
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a href="auth.html" class="dropdown-item">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                        <span>Logout</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <button
+                                class="md:hidden flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-background-light dark:bg-background-dark text-[#111818] dark:text-white gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5 border border-[#dbe5e6] dark:border-gray-700">
+                                <span class="material-symbols-outlined">menu</span>
+                            </button>
+                            <button
+                                class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-primary/20 dark:bg-primary/30 text-primary gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-4">
+                                <span class="material-symbols-outlined">print</span>
+                                <span class="hidden sm:inline">Export</span>
+                            </button>
+                        </div>
+                    </header>
+
+                    <main class="flex-1 px-4 sm:px-6 md:px-10 py-8">
+                        <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
+                            <div class="flex min-w-72 flex-col gap-1">
+                                <p
+                                    class="text-[#111818] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
+                                    My Timetable</p>
+                                <p class="text-[#5f898c] dark:text-gray-400 text-base font-normal leading-normal">
+                                    2025-2026 AV Autumn Semester (2025.09.04 - 2025.12.14)</p>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="flex bg-background-light dark:bg-gray-800 rounded-lg p-1 border border-[#dbe5e6] dark:border-gray-700">
+                                    <button id="tableViewBtn"
+                                        class="view-toggle active flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-white text-sm font-medium">
+                                        <span class="material-symbols-outlined text-sm">table_chart</span>
+                                        <span>Table</span>
+                                    </button>
+                                    <button id="calendarViewBtn"
+                                        class="view-toggle flex items-center gap-2 px-4 py-2 rounded-md text-[#5f898c] dark:text-gray-400 hover:text-primary text-sm font-medium">
+                                        <span class="material-symbols-outlined text-sm">calendar_month</span>
+                                        <span>Calendar</span>
+                                    </button>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button
+                                        class="p-2 rounded-lg bg-background-light dark:bg-gray-800 border border-[#dbe5e6] dark:border-gray-700 text-[#5f898c] dark:text-gray-400 hover:bg-primary/20 dark:hover:bg-primary/30 hover:text-primary">
+                                        <span class="material-symbols-outlined">chevron_left</span>
+                                    </button>
+                                    <button
+                                        class="p-2 rounded-lg bg-background-light dark:bg-gray-800 border border-[#dbe5e6] dark:border-gray-700 text-[#5f898c] dark:text-gray-400 hover:bg-primary/20 dark:hover:bg-primary/30 hover:text-primary">
+                                        <span class="material-symbols-outlined">chevron_right</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="flex flex-col min-w-40 h-12 w-full">
+                                <div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+                                    <div
+                                        class="text-[#5f898c] dark:text-gray-400 flex border border-r-0 border-[#dbe5e6] dark:border-gray-700 bg-background-light dark:bg-gray-800 items-center justify-center pl-4 rounded-l-lg">
+                                        <span class="material-symbols-outlined">search</span>
+                                    </div>
+                                    <input id="searchInput"
+                                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111818] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary focus:border-primary border border-l-0 border-[#dbe5e6] dark:border-gray-700 bg-background-light dark:bg-gray-800 h-full placeholder:text-[#5f898c] dark:placeholder:text-gray-500 px-4 rounded-l-none pl-2 text-base font-normal leading-normal"
+                                        placeholder="Filter by course, lecturer, or class type" value="" />
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Table View -->
+                        <div id="tableView" class="table-container scan-animation @container fade-in">
+                            <div class="mb-4 p-4 bg-primary/10 dark:bg-primary/20 rounded-lg border border-primary/30">
+                                <p class="text-sm text-[#5f898c] dark:text-gray-400 mb-2"><strong>Time:</strong> (1)
+                                    first part of the lecture (first 45 min.), (2) second part of the lecture (second 45
+                                    min.), if not indicated - whole lecture.</p>
+                                <p class="text-sm text-[#5f898c] dark:text-gray-400 mb-2"><strong>Week:</strong> 1: The
+                                    lecture takes place on the 1st week, 2: the lecture takes place on the 2d week, if
+                                    not indicated, the lecture takes place weekly.</p>
+                                <p class="text-sm text-[#5f898c] dark:text-gray-400"><strong>Subgroup:</strong> (0 -
+                                    all, 1 - 1st subgroup, 2 - 2nd subgroup, 3 - 3rd subgroup).</p>
+                            </div>
+                            <div
+                                class="flex overflow-hidden rounded-lg border border-[#dbe5e6] dark:border-gray-700 bg-white dark:bg-background-dark">
+                                <table class="flex-1 w-full text-left">
+                                    <thead>
+                                        <tr class="bg-primary/20 dark:bg-primary/30">
+                                            <th
+                                                class="px-4 py-3 text-left text-[#003366] dark:text-white w-[15%] text-sm font-medium leading-normal">
+                                                Time</th>
+                                            <th
+                                                class="px-4 py-3 text-left text-[#003366] dark:text-white w-[17%] text-sm font-medium leading-normal">
+                                                Monday</th>
+                                            <th
+                                                class="px-4 py-3 text-left text-[#003366] dark:text-white w-[17%] text-sm font-medium leading-normal">
+                                                Tuesday</th>
+                                            <th
+                                                class="px-4 py-3 text-left text-[#003366] dark:text-white w-[17%] text-sm font-medium leading-normal">
+                                                Wednesday</th>
+                                            <th
+                                                class="table-column-thursday px-4 py-3 text-left text-[#003366] dark:text-white w-[17%] text-sm font-medium leading-normal">
+                                                Thursday</th>
+                                            <th
+                                                class="table-column-friday px-4 py-3 text-left text-[#003366] dark:text-white w-[17%] text-sm font-medium leading-normal">
+                                                Friday</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-[#dbe5e6] dark:divide-gray-700" id="tableBody">
+                                        <tr
+                                            class="hover:bg-[#e6f7f9] dark:hover:bg-[#05b1bd]/20 transition-colors duration-200 cursor-pointer">
+                                            <td
+                                                class="h-[80px] px-4 py-3 text-[#5f898c] dark:text-gray-400 text-sm font-normal leading-normal">
+                                                08:30-10:05</td>
+                                            <td
+                                                class="h-[80px] px-4 py-3 text-[#333333] dark:text-gray-300 text-sm font-normal leading-normal">
+                                            </td>
+                                            <td class="h-[80px] px-4 py-3">
+                                                <div class="subject-ai-software p-3 rounded-lg">
+                                                    <div class="font-semibold">Software of Applied AI</div>
+                                                    <div class="text-xs text-[#5f898c] dark:text-gray-500 mt-1">Oleksii
+                                                        Shatokhin • P1 215 (Lab)</div>
+                                                    <div class="text-xs text-[#5f898c] dark:text-gray-500">Subgroup: 0,
+                                                        Week: -</div>
+                                                </div>
+                                            </td>
+                                            <td class="h-[80px] px-4 py-3"></td>
+                                            <td class="table-column-thursday h-[80px] px-4 py-3"></td>
+                                            <td class="table-column-friday h-[80px] px-4 py-3"></td>
+                                        </tr>
+                                        <tr
+                                            class="hover:bg-[#e6f7f9] dark:hover:bg-[#05b1bd]/20 transition-colors duration-200 cursor-pointer">
+                                            <td
+                                                class="h-[80px] px-4 py-3 text-[#5f898c] dark:text-gray-400 text-sm font-normal leading-normal">
+                                                10:20-11:55</td>
+                                            <td class="h-[80px] px-4 py-3"></td>
+                                            <td class="h-[80px] px-4 py-3">
+                                                <div class="subject-ai-fundamentals p-3 rounded-lg">
+                                                    <div class="font-semibold">Fundamentals of Applied AI</div>
+                                                    <div class="text-xs text-[#5f898c] dark:text-gray-500 mt-1">Dr.
+                                                        Antanas Zinovičius • P3 506 (Lecture)</div>
+                                                    <div class="text-xs text-[#5f898c] dark:text-gray-500">Subgroup: 0,
+                                                        Week: -</div>
+                                                </div>
+                                            </td>
+                                            <td class="h-[80px] px-4 py-3"></td>
+                                            <td class="table-column-thursday h-[80px] px-4 py-3"></td>
+                                            <td class="table-column-friday h-[80px] px-4 py-3"></td>
+                                        </tr>
+                                        <tr
+                                            class="hover:bg-[#e6f7f9] dark:hover:bg-[#05b1bd]/20 transition-colors duration-200 cursor-pointer">
+                                            <td
+                                                class="h-[80px] px-4 py-3 text-[#5f898c] dark:text-gray-400 text-sm font-normal leading-normal">
+                                                12:10-13:45</td>
+                                            <td class="h-[80px] px-4 py-3"></td>
+                                            <td class="h-[80px] px-4 py-3">
+                                                <div class="subject-english p-3 rounded-lg">
+                                                    <div class="font-semibold">English Language</div>
+                                                    <div class="text-xs text-[#5f898c] dark:text-gray-500 mt-1">Jūratė
+                                                        Butkienė • P2 512 (Practical)</div>
+                                                    <div class="text-xs text-[#5f898c] dark:text-gray-500">Subgroup: 1,
+                                                        Week: 1</div>
+                                                </div>
+                                            </td>
+                                            <td class="h-[80px] px-4 py-3"></td>
+                                            <td class="table-column-thursday h-[80px] px-4 py-3"></td>
+                                            <td class="table-column-friday h-[80px] px-4 py-3"></td>
+                                        </tr>
+                                        <tr
+                                            class="hover:bg-[#e6f7f9] dark:hover:bg-[#05b1bd]/20 transition-colors duration-200 cursor-pointer">
+                                            <td
+                                                class="h-[80px] px-4 py-3 text-[#5f898c] dark:text-gray-400 text-sm font-normal leading-normal">
+                                                14:30-16:05</td>
+                                            <td class="h-[80px] px-4 py-3">
+                                                <div class="subject-law p-3 rounded-lg">
+                                                    <div class="font-semibold">Law</div>
+                                                    <div class="text-xs text-[#5f898c] dark:text-gray-500 mt-1">Dr.
+                                                        Raimonda Butkienė • P2 134 (Lecture)</div>
+                                                    <div class="text-xs text-[#5f898c] dark:text-gray-500">Subgroup: 0,
+                                                        Week: -</div>
+                                                </div>
+                                            </td>
+                                            <td class="h-[80px] px-4 py-3">
+                                                <div class="subject-english p-3 rounded-lg">
+                                                    <div class="font-semibold">English Language</div>
+                                                    <div class="text-xs text-[#5f898c] dark:text-gray-500 mt-1">Jūratė
+                                                        Butkienė • P2 509 (Practical)</div>
+                                                    <div class="text-xs text-[#5f898c] dark:text-gray-500">Subgroup: 2,
+                                                        Week: 2</div>
+                                                </div>
+                                            </td>
+                                            <td class="h-[80px] px-4 py-3"></td>
+                                            <td class="table-column-thursday h-[80px] px-4 py-3"></td>
+                                            <td class="table-column-friday h-[80px] px-4 py-3"></td>
+                                        </tr>
+                                        <tr
+                                            class="hover:bg-[#e6f7f9] dark:hover:bg-[#05b1bd]/20 transition-colors duration-200 cursor-pointer">
+                                            <td
+                                                class="h-[80px] px-4 py-3 text-[#5f898c] dark:text-gray-400 text-sm font-normal leading-normal">
+                                                16:20-17:55</td>
+                                            <td class="h-[80px] px-4 py-3">
+                                                <div class="subject-math p-3 rounded-lg">
+                                                    <div class="font-semibold">Mathematics 1</div>
+                                                    <div class="text-xs text-[#5f898c] dark:text-gray-500 mt-1">Dr.
+                                                        Julija Karaliūnaitė • P2 137 (Lecture)</div>
+                                                    <div class="text-xs text-[#5f898c] dark:text-gray-500">Subgroup: 0,
+                                                        Week: -</div>
+                                                </div>
+                                            </td>
+                                            <td class="h-[80px] px-4 py-3"></td>
+                                            <td class="h-[80px] px-4 py-3"></td>
+                                            <td class="table-column-thursday h-[80px] px-4 py-3"></td>
+                                            <td class="table-column-friday h-[80px] px-4 py-3"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Calendar View -->
+                        <div id="calendarView" class="hidden slide-in">
+                            <div class="mb-4 p-4 bg-primary/10 dark:bg-primary/20 rounded-lg border border-primary/30">
+                                <p class="text-sm text-[#5f898c] dark:text-gray-400 mb-2"><strong>Time:</strong> (1)
+                                    first part of the lecture (first 45 min.), (2) second part of the lecture (second 45
+                                    min.), if not indicated - whole lecture.</p>
+                                <p class="text-sm text-[#5f898c] dark:text-gray-400 mb-2"><strong>Week:</strong> 1: The
+                                    lecture takes place on the 1st week, 2: the lecture takes place on the 2d week, if
+                                    not indicated, the lecture takes place weekly.</p>
+                                <p class="text-sm text-[#5f898c] dark:text-gray-400"><strong>Subgroup:</strong> (0 -
+                                    all, 1 - 1st subgroup, 2 - 2nd subgroup, 3 - 3rd subgroup).</p>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-5 gap-4" id="calendarBody">
+                                <!-- Monday -->
+                                <div
+                                    class="calendar-day bg-white dark:bg-background-dark rounded-lg border border-[#dbe5e6] dark:border-gray-700 overflow-hidden">
+                                    <div
+                                        class="bg-primary/20 dark:bg-primary/30 p-3 border-b border-[#dbe5e6] dark:border-gray-700">
+                                        <h3 class="font-bold text-[#003366] dark:text-white">Monday</h3>
+                                    </div>
+                                    <div class="p-4 space-y-3">
+                                        <div class="calendar-event subject-law p-3 rounded-lg">
+                                            <div class="text-sm font-medium text-blue-800 dark:text-blue-300">
+                                                14:30-16:05</div>
+                                            <div class="text-sm font-semibold mt-1">Law</div>
+                                            <div class="text-xs text-blue-600 dark:text-blue-400 mt-1">Dr. Raimonda
+                                                Butkienė • P2 134</div>
+                                            <div class="text-xs text-blue-600 dark:text-blue-400">Lecture • Subgroup: 0
+                                            </div>
+                                        </div>
+                                        <div class="calendar-event subject-math p-3 rounded-lg">
+                                            <div class="text-sm font-medium text-green-800 dark:text-green-300">
+                                                16:20-17:55</div>
+                                            <div class="text-sm font-semibold mt-1">Mathematics 1</div>
+                                            <div class="text-xs text-green-600 dark:text-green-400 mt-1">Dr. Julija
+                                                Karaliūnaitė • P2 137</div>
+                                            <div class="text-xs text-green-600 dark:text-green-400">Lecture • Subgroup:
+                                                0</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Tuesday -->
+                                <div
+                                    class="calendar-day bg-white dark:bg-background-dark rounded-lg border border-[#dbe5e6] dark:border-gray-700 overflow-hidden">
+                                    <div
+                                        class="bg-primary/20 dark:bg-primary/30 p-3 border-b border-[#dbe5e6] dark:border-gray-700">
+                                        <h3 class="font-bold text-[#003366] dark:text-white">Tuesday</h3>
+                                    </div>
+                                    <div class="p-4 space-y-3">
+                                        <div class="calendar-event subject-ai-software p-3 rounded-lg">
+                                            <div class="text-sm font-medium text-purple-800 dark:text-purple-300">
+                                                08:30-10:05</div>
+                                            <div class="text-sm font-semibold mt-1">Software of Applied AI</div>
+                                            <div class="text-xs text-purple-600 dark:text-purple-400 mt-1">Oleksii
+                                                Shatokhin • P1 215</div>
+                                            <div class="text-xs text-purple-600 dark:text-purple-400">Lab • Subgroup: 0
+                                            </div>
+                                        </div>
+                                        <div class="calendar-event subject-ai-fundamentals p-3 rounded-lg">
+                                            <div class="text-sm font-medium text-indigo-800 dark:text-indigo-300">
+                                                10:20-11:55</div>
+                                            <div class="text-sm font-semibold mt-1">Fundamentals of Applied AI</div>
+                                            <div class="text-xs text-indigo-600 dark:text-indigo-400 mt-1">Dr. Ananas
+                                                Znotinas • P3 506</div>
+                                            <div class="text-xs text-indigo-600 dark:text-indigo-400">Lecture •
+                                                Subgroup: 0</div>
+                                        </div>
+                                        <div class="calendar-event subject-english p-3 rounded-lg">
+                                            <div class="text-sm font-medium text-amber-800 dark:text-amber-300">
+                                                12:10-13:45</div>
+                                            <div class="text-sm font-semibold mt-1">English Language</div>
+                                            <div class="text-xs text-amber-600 dark:text-amber-400 mt-1">Jūratė Butkienė
+                                                • P2 512</div>
+                                            <div class="text-xs text-amber-600 dark:text-amber-400">Practical •
+                                                Subgroup: 1, Week: 1</div>
+                                        </div>
+                                        <div class="calendar-event subject-english p-3 rounded-lg">
+                                            <div class="text-sm font-medium text-amber-800 dark:text-amber-300">
+                                                14:30-16:05</div>
+                                            <div class="text-sm font-semibold mt-1">English Language</div>
+                                            <div class="text-xs text-amber-600 dark:text-amber-400 mt-1">Jūratė Butkienė
+                                                • P2 509</div>
+                                            <div class="text-xs text-amber-600 dark:text-amber-400">Practical •
+                                                Subgroup: 2, Week: 2</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Wednesday -->
+                                <div
+                                    class="calendar-day bg-white dark:bg-background-dark rounded-lg border border-[#dbe5e6] dark:border-gray-700 overflow-hidden">
+                                    <div
+                                        class="bg-primary/20 dark:bg-primary/30 p-3 border-b border-[#dbe5e6] dark:border-gray-700">
+                                        <h3 class="font-bold text-[#003366] dark:text-white">Wednesday</h3>
+                                    </div>
+                                    <div class="p-4">
+                                        <p class="text-center text-[#5f898c] dark:text-gray-500 text-sm py-8">No classes
+                                            scheduled</p>
+                                    </div>
+                                </div>
+
+                                <!-- Thursday -->
+                                <div
+                                    class="calendar-day bg-white dark:bg-background-dark rounded-lg border border-[#dbe5e6] dark:border-gray-700 overflow-hidden">
+                                    <div
+                                        class="bg-primary/20 dark:bg-primary/30 p-3 border-b border-[#dbe5e6] dark:border-gray-700">
+                                        <h3 class="font-bold text-[#003366] dark:text-white">Thursday</h3>
+                                    </div>
+                                    <div class="p-4">
+                                        <p class="text-center text-[#5f898c] dark:text-gray-500 text-sm py-8">No classes
+                                            scheduled</p>
+                                    </div>
+                                </div>
+
+                                <!-- Friday -->
+                                <div
+                                    class="calendar-day bg-white dark:bg-background-dark rounded-lg border border-[#dbe5e6] dark:border-gray-700 overflow-hidden">
+                                    <div
+                                        class="bg-primary/20 dark:bg-primary/30 p-3 border-b border-[#dbe5e6] dark:border-gray-700">
+                                        <h3 class="font-bold text-[#003366] dark:text-white">Friday</h3>
+                                    </div>
+                                    <div class="p-4">
+                                        <p class="text-center text-[#5f898c] dark:text-gray-500 text-sm py-8">No classes
+                                            scheduled</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const body = document.body;
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const tableViewBtn = document.getElementById('tableViewBtn');
+        const calendarViewBtn = document.getElementById('calendarViewBtn');
+        const tableView = document.getElementById('tableView');
+        const calendarView = document.getElementById('calendarView');
+        const searchInput = document.getElementById('searchInput');
+        const tableBody = document.getElementById('tableBody');
+        const calendarBody = document.getElementById('calendarBody');
+        const viewToggles = document.querySelectorAll('.view-toggle');
+
+        // Dropdown elements
+        const notificationBtn = document.getElementById('notificationBtn');
+        const notificationDropdown = document.getElementById('notificationDropdown');
+        const notificationClear = document.getElementById('notificationClear');
+        const profileBtn = document.getElementById('profileBtn');
+        const profileDropdown = document.getElementById('profileDropdown');
+        const dropdowns = [notificationDropdown, profileDropdown];
+
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        if (savedTheme === 'dark') {
+            body.classList.add('dark');
+            themeIcon.textContent = 'light_mode';
+        }
+
+        // Theme toggle functionality
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark');
+
+            if (body.classList.contains('dark')) {
+                themeIcon.textContent = 'light_mode';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.textContent = 'dark_mode';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // View toggle functionality
+        tableViewBtn.addEventListener('click', () => {
+            switchView('table');
+        });
+
+        calendarViewBtn.addEventListener('click', () => {
+            switchView('calendar');
+        });
+
+        function switchView(view) {
+            // Update active button
+            viewToggles.forEach(toggle => {
+                toggle.classList.remove('active', 'bg-primary', 'text-white');
+                toggle.classList.add('text-[#5f898c]', 'dark:text-gray-400');
+            });
+
+            if (view === 'table') {
+                tableViewBtn.classList.add('active', 'bg-primary', 'text-white');
+                tableViewBtn.classList.remove('text-[#5f898c]', 'dark:text-gray-400');
+                tableView.classList.remove('hidden');
+                tableView.classList.add('fade-in');
+                calendarView.classList.add('hidden');
+            } else {
+                calendarViewBtn.classList.add('active', 'bg-primary', 'text-white');
+                calendarViewBtn.classList.remove('text-[#5f898c]', 'dark:text-gray-400');
+                calendarView.classList.remove('hidden');
+                calendarView.classList.add('slide-in');
+                tableView.classList.add('hidden');
+            }
+
+            // Add shimmer effect
+            const activeBtn = view === 'table' ? tableViewBtn : calendarViewBtn;
+            activeBtn.classList.add('active');
+            setTimeout(() => {
+                activeBtn.classList.remove('active');
+            }, 1500);
+        }
+
+        // Search functionality
+        searchInput.addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase();
+
+            // Filter table view
+            const tableRows = tableBody.querySelectorAll('tr');
+            tableRows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    row.style.display = '';
+                    row.classList.add('fade-in');
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Filter calendar view
+            const calendarDays = calendarBody.querySelectorAll('.calendar-day');
+            calendarDays.forEach(day => {
+                const events = day.querySelectorAll('.calendar-event');
+                let hasVisibleEvents = false;
+
+                events.forEach(event => {
+                    const text = event.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        event.style.display = '';
+                        event.classList.add('fade-in');
+                        hasVisibleEvents = true;
+                    } else {
+                        event.style.display = 'none';
+                    }
+                });
+
+                // Show or hide the day based on whether it has visible events
+                const noClassesMessage = day.querySelector('p.text-center');
+                if (hasVisibleEvents) {
+                    day.style.display = '';
+                    if (noClassesMessage) noClassesMessage.style.display = 'none';
+                } else {
+                    if (noClassesMessage) {
+                        noClassesMessage.style.display = 'block';
+                        day.style.display = '';
+                    } else {
+                        day.style.display = 'none';
+                    }
+                }
+            });
+        });
+
+        // Dropdown functionality
+        notificationBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeAllDropdowns();
+            notificationDropdown.classList.toggle('show');
+        });
+
+        profileBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeAllDropdowns();
+            profileDropdown.classList.toggle('show');
+        });
+
+        // Mark all notifications as read
+        notificationClear.addEventListener('click', () => {
+            const unreadNotifications = document.querySelectorAll('.notification-item.unread');
+            unreadNotifications.forEach(notification => {
+                notification.classList.remove('unread');
+            });
+
+            // Hide notification badge
+            const badge = document.querySelector('.notification-badge-modern');
+            badge.style.display = 'none';
+        });
+
+        // Close all dropdowns function
+        function closeAllDropdowns() {
+            dropdowns.forEach(dropdown => {
+                dropdown.classList.remove('show');
+            });
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', () => {
+            closeAllDropdowns();
+        });
+
+        // Add animation to table rows on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const tableRows = tableBody.querySelectorAll('tr');
+            tableRows.forEach((row, index) => {
+                row.style.opacity = '0';
+                setTimeout(() => {
+                    row.style.opacity = '1';
+                }, 100 * index);
+            });
+
+            const calendarEvents = document.querySelectorAll('.calendar-event');
+            calendarEvents.forEach((event, index) => {
+                event.style.opacity = '0';
+                setTimeout(() => {
+                    event.style.opacity = '1';
+                }, 100 * index);
+            });
+        });
+    </script>
+</body>
+
+</html>
