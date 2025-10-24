@@ -2,6 +2,8 @@
 
 > **A modern front-end redesign of the Vilnius Tech student portal**, created out of passion for my university and curiosity to imagine how the platform could look and feel with a modern touch.
 
+Current Vilnius Tech university website: https://mano.vilniustech.lt
+
 ---
 
 ## 🌍 Overview
